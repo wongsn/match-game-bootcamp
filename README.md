@@ -1,1 +1,3 @@
-# Software Engineering 101 - Intro to Coding
+# SWE1: Software Engineering Foundations
+
+## High Card
