@@ -1,3 +1,1 @@
-# Rocket Academy Coding Bootcamp
-
-## Match Game
+# Rocket Academy Coding Bootcamp: Match Game
