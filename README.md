@@ -1,3 +1,3 @@
-# SWE1: Software Engineering Foundations
+# Rocket Academy Coding Bootcamp
 
 ## Match Game
