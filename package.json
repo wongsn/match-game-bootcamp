@@ -1,5 +1,5 @@
 {
-  "name": "match-game-swe1",
+  "name": "match-game-bootcamp",
   "version": "1.0.0",
   "description": "SWE1 Match Game",
   "main": "script.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rocketacademy/match-game-swe1.git"
+    "url": "git+https://github.com/rocketacademy/match-game-bootcamp.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rocketacademy/match-game-swe1/issues"
+    "url": "https://github.com/rocketacademy/match-game-bootcamp/issues"
   },
-  "homepage": "https://github.com/rocketacademy/match-game-swe1#readme",
+  "homepage": "https://github.com/rocketacademy/match-game-bootcamp#readme",
   "devDependencies": {
     "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
