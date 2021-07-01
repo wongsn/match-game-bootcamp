@@ -1,7 +1,7 @@
 // Please implement exercise logic here
-/*####################
+/* ####################
 ## HELPER FUNCTIONS ##
-####################*/
+#################### */
 const makeDeck = (cardAmount) => {
   // create the empty deck at the beginning
   const newDeck = [];
@@ -17,24 +17,24 @@ const makeDeck = (cardAmount) => {
 
     // set suit symbol to match current suit
     if (currentSuit === 'hearts') {
-        currentSymbol = '♥️';
+      currentSymbol = '♥️';
     } else if (currentSuit === 'spades') {
-        currentSymbol = '♠️';
+      currentSymbol = '♠️';
     } else if (currentSuit === 'clubs') {
-        currentSymbol = '♣️';
+      currentSymbol = '♣️';
     } else {
-        currentSymbol = '♦️';
+      currentSymbol = '♦️';
     }
 
     // set the color of the card (used later to determine the css class which in turn determines the color)
     // does not directly set the color of the card
     let cardColor;
-    if (currentSymbol === '♥️' || currentSymbol === '♦️' ) {
-        cardColor = 'red';
+    if (currentSymbol === '♥️' || currentSymbol === '♦️') {
+      cardColor = 'red';
     } else {
-        cardColor = 'black';
+      cardColor = 'black';
     }
-    
+
     // loop to create all cards in this suit
     // rank 1-13
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
@@ -93,71 +93,69 @@ const shuffleCards = (cards) => {
   return cards;
 };
 
-/*###########################
+/* ###########################
 ## PLAYER ACTION CALLBACKS ##
-###########################*/
+########################### */
 const squareClick = (messageBoard, cardElement, column, row) => {
-    console.log(cardElement);
-    console.log('FIRST CARD DOM ELEMENT', firstCard);
-    console.log('BOARD CLICKED CARD', board[column][row]);
-    const clickedCard = board[column][row]; 
+  console.log(cardElement);
+  console.log('FIRST CARD DOM ELEMENT', firstCard);
+  console.log('BOARD CLICKED CARD', board[column][row]);
+  const clickedCard = board[column][row];
 
-    // the user already clicked on this square
-    if( cardElement.innerText !== '' ){
-        return;
-    }
+  // the user already clicked on this square
+  if (cardElement.innerText !== '') {
+    return;
+  }
 
-    // first turn
-    if (firstCard === null) {
-      console.log('first turn');
-      firstCard = clickedCard;
-      // turn this card over
-      cardElement.classList.add('card');
-      cardElement.innerHTML = `${firstCard.name}<br>${firstCard.suitSymbol}`;
-      messageBoard.innerText = 'click on another square';
-      // hold onto this for later when it may not match
-      firstCardElement = cardElement;
+  // first turn
+  if (firstCard === null) {
+    console.log('first turn');
+    firstCard = clickedCard;
+    // turn this card over
+    cardElement.classList.add('card');
+    cardElement.innerHTML = `${firstCard.name}<br>${firstCard.suitSymbol}`;
+    messageBoard.innerText = 'click on another square';
+    // hold onto this for later when it may not match
+    firstCardElement = cardElement;
 
     // second turn
+  } else {
+    console.log('second turn');
+    // condition is met, first card matches second card
+    if (
+      clickedCard.name === firstCard.name
+        && clickedCard.suit === firstCard.suit
+    ) {
+      console.log('match');
+      // display match message
+      messageBoard.innerText = 'it\'s a match!';
+      // apply css class and card's name and suit to cardElement so that it looks like the card has been turned over
+      cardElement.classList.add('card');
+      cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suitSymbol}`;
     } else {
-      console.log('second turn');
-      // condition is met, first card matches second card
-      if (
-        clickedCard.name === firstCard.name &&
-        clickedCard.suit === firstCard.suit
-      ) {
-        console.log('match');
-        // display match message
-        messageBoard.innerText = 'it\'s a match!';
-        // apply css class and card's name and suit to cardElement so that it looks like the card has been turned over
-        cardElement.classList.add('card');
-        cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suitSymbol}`;
+      console.log('NOT a match');
+      messageBoard.innerText = 'no match, try again';
+      cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suitSymbol}`;
+      cardElement.classList.add('card');
 
-      } else {
-        console.log('NOT a match');
-        messageBoard.innerText = 'no match, try again';
-        cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suitSymbol}`;
-        cardElement.classList.add('card');
-
-        // turn both cards back over after 3 seconds
-        // removing innerText and changing the css class back to square, returns it to it's original state
-        setTimeout(() => {
-          firstCardElement.innerText = '';
-          firstCardElement.className = 'square';
-          cardElement.innerText = '';
-          cardElement.className = 'square';
-        }, 3000);
-        
-      }
-
-      // reset the first card
-      firstCard = null;
+      // turn both cards back over after 3 seconds
+      // removing innerText and changing the css class back to square, returns it to it's original state
+      setTimeout(() => {
+        firstCardElement.innerText = '';
+        firstCardElement.className = 'square';
+        cardElement.innerText = '';
+        cardElement.className = 'square';
+      }, 3000);
     }
+
+    // reset the first card
+    firstCard = null;
+  }
 };
 
-/*#######################
+/* #######################
 ## GLOBAL VARIABLES #####
-#######################*/
+####################### */
 // boardSize has to be an even number
 const boardSize = 4;
 const board = [];
@@ -165,9 +163,9 @@ let firstCard = null;
 let firstCardElement;
 let deck;
 
-/*########################
+/* ########################
 ## GAME INITIALISATION ###
-########################*/
+######################## */
 // create all the board elements that will go on the screen
 // return the built board
 const buildBoardElements = (board) => {
@@ -220,8 +218,8 @@ const buildBoardElements = (board) => {
 const initGame = () => {
   // create this special deck by getting the doubled cards and
   // making a smaller array that is ( boardSize squared ) number of cards
-  let doubleDeck = makeDeck();
-  let deckSubset = doubleDeck.slice(0, boardSize * boardSize);
+  const doubleDeck = makeDeck();
+  const deckSubset = doubleDeck.slice(0, boardSize * boardSize);
   deck = shuffleCards(deckSubset);
 
   // deal the cards out to the board data structure
@@ -237,6 +235,6 @@ const initGame = () => {
   document.body.appendChild(boardEl);
 };
 
-//#########################################
+// #########################################
 // initialise game by calling initGame function
 initGame();
