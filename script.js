@@ -93,6 +93,16 @@ const shuffleCards = (cards) => {
   return cards;
 };
 
+/* #######################
+## GLOBAL VARIABLES #####
+####################### */
+// boardSize has to be an even number
+const boardSize = 4;
+const board = [];
+let firstCard = null;
+let firstCardElement;
+let deck;
+
 /* ###########################
 ## PLAYER ACTION CALLBACKS ##
 ########################### */
@@ -152,16 +162,6 @@ const squareClick = (messageBoard, cardElement, column, row) => {
     firstCard = null;
   }
 };
-
-/* #######################
-## GLOBAL VARIABLES #####
-####################### */
-// boardSize has to be an even number
-const boardSize = 4;
-const board = [];
-let firstCard = null;
-let firstCardElement;
-let deck;
 
 /* ########################
 ## GAME INITIALISATION ###
