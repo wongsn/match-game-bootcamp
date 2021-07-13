@@ -13,7 +13,7 @@ const scoreBoard = document.createElement('div');
 scoreBoard.classList.add('scoreBoard');
 scoreBoard.innerHTML = `${score} out of ${maxScore}`;
 
-const makeDeck = (cardAmount) => {
+const makeDeck = () => {
   // create the empty deck at the beginning
   const newDeck = [];
   const suits = ['♦', '♣', '♥', '♠'];
@@ -51,10 +51,9 @@ const makeDeck = (cardAmount) => {
 
       // add the card to the deck
       newDeck.push(card); // add double the cards to the deck
-      newDeck.push(card);
+      // newDeck.push(card);
     }
   }
-  console.log(newDeck);
   return newDeck;
 };
 
@@ -191,14 +190,26 @@ document.body.appendChild(startButton);
 const makeGame = () => {
   // create this special deck by getting the doubled cards and
   // making a smaller array that is ( boardSize squared ) number of cards
-  const doubleDeck = makeDeck();
-  console.log(doubleDeck);
-  const deckSubset = doubleDeck.slice(0, boardSize * boardSize);
-  console.log(doubleDeck);
+  // create double, slice, shuffle - 1
+  // create one, shuffle, double, slice - 2
+  const singledeck = makeDeck();
+  const shuffledsingle = shuffleCards(singledeck);
+  const duplicateDeck = (deck) => {
+    const double = [];
+    for (let i = 0; i < deck.length; i += 1) {
+      double.push(deck[i]);
+      double.push(deck[i]);
+    }
+    return double;
+  };
+  const duplicated = duplicateDeck(shuffledsingle);
+  console.log(duplicated);
+  const deckSubset = duplicated.slice(0, boardSize * boardSize);
   deck = shuffleCards(deckSubset);
+
+  // console.log(deck);
   // eslint-disable-next-line max-len
   // this does not generate a true scrambled deck, rather it shuffles the first #boardsize^2 number of cards from a sequential deck
-  console.log(deck);
 
   // deal the cards out to the board data structure
   for (let i = 0; i < boardSize; i += 1) {
@@ -208,7 +219,6 @@ const makeGame = () => {
     }
   }
 
-  console.log(board);
   const boardEl = buildBoardElements(board);
 
   document.body.insertBefore(boardEl, startButton);
