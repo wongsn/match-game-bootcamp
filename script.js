@@ -82,18 +82,23 @@ const squareClick = (cardElement, column, row) => {
   console.log(cardElement);
 
   console.log('FIRST CARD DOM ELEMENT', firstCard);
+  // console.log(firstCard != null);
 
   console.log('BOARD CLICKED CARD', board[column][row]);
-
   const clickedCard = board[column][row];
+
+  const clearCard = () => {
+    firstCardElement.innerText = '';
+    cardElement.innerText = '';
+  };
 
   // the user already clicked on this square
   if (cardElement.innerText !== '') {
-    return;
-  }
-
-  // first turn
-  if (firstCard === null) {
+    firstCard = null;
+    setTimeout(clearCard, 0);
+    console.log(firstCard);
+    // setTimeout(clearCard, 0);
+  } else if (firstCard === null) {
     console.log('first turn');
     firstCard = clickedCard;
     // turn this card over
@@ -116,9 +121,10 @@ const squareClick = (cardElement, column, row) => {
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
     } else {
       console.log('NOT a match');
-
       // turn this card back over
-      firstCardElement.innerText = '';
+      cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
+      firstCard = null;
+      setTimeout(clearCard, 3000);
     }
 
     // reset the first card
