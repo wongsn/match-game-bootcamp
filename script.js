@@ -3,16 +3,16 @@
 // boardSize has to be an even number
 let nameInput;
 const boardSize = 4;
-const board = [];
+let board = [];
 let gameWins = 0;
-const gameLoss = 0;
+let gameLoss = 0;
 let totalGames = gameWins + gameLoss;
 let winP = 0;
 const checkWinRate = () => {
   if (totalGames == 0) {
     winP = 0;
   }
-  winP = gameWins / totalGames;
+  winP = gameWins / totalGames * 100;
 };
 let firstCard = null;
 let firstCardElement;
@@ -101,10 +101,14 @@ const squareClick = (cardElement, column, row) => {
   };
 
   const mutateCard = () => {
-    cardElement.replaceWith(firstCardElement.cloneNode(true));
+    const p = firstCardElement.cloneNode(true);
+    const q = firstCardElement.cloneNode(true);
+    cardElement.replaceWith(p);
     cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
-    firstCardElement.replaceWith(firstCardElement.cloneNode(true));
+    firstCardElement.replaceWith(q);
     firstCardElement.innerHTML = `${firstCard.name}<br>${firstCard.suit}`;
+    p.id = 'score';
+    q.id = 'score';
   };
 
   // the user already clicked on this square
@@ -136,6 +140,9 @@ const squareClick = (cardElement, column, row) => {
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
       if (score == maxScore) {
         gameWins += 1;
+        totalGames = gameWins + gameLoss;
+        checkWinRate();
+        document.getElementById('giveup-button').disabled = true;
         const end = window.performance.now();
         const timing = Math.floor((end - start) / 1000);
         setTimeout(scoreBoard.innerHTML = `<br>You won, in a time of ${timing}s.<br>Your winning rate is ${winP}% - Total Games Played: ${totalGames}`, 5000);
@@ -166,7 +173,7 @@ const buildBoardElements = (board) => {
 
   // give it a class for CSS purposes
   boardElement.classList.add('board');
-
+  boardElement.id = 'board';
   // use the board data structure we passed in to create the correct size board
   for (let i = 0; i < board.length; i += 1) {
     // make a var for just this row of cards
@@ -207,6 +214,7 @@ const buildBoardElements = (board) => {
 const inputField = document.createElement('input');
 inputField.setAttribute('id', 'input');
 inputField.setAttribute('type', 'string');
+inputField.setAttribute('style', 'text-align:center');
 inputField.innerText = 'Input your name!';
 document.body.appendChild(inputField);
 
@@ -272,15 +280,20 @@ const getName = () => {
 const startGame = () => {
   getName();
   start = window.performance.now();
+  if (totalGames > 0) {
+    document.getElementById('board').remove();
+    board = [];
+  }
   makeGame();
   document.getElementById('start-button').disabled = true;
   document.getElementById('giveup-button').disabled = false;
-  scoreBoard.innerHTML = `Welcome ${nameInput}!<br>You've scored 0 out of ${maxScore}<br>This is your first game.`;
+  scoreBoard.innerHTML = `Welcome ${nameInput}!<br> This is Game #${totalGames + 1}. <br>Your winning percentage is ${winP}%.`;
   document.getElementById('input').disabled = true;
 };
 
 const giveUp = () => {
-  totalGames += 1;
+  gameLoss++;
+  totalGames = gameWins + gameLoss;
   checkWinRate();
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board.length; j++) {
@@ -292,7 +305,10 @@ const giveUp = () => {
   scoreBoard.innerHTML = `Too bad! Try again! <br>
   Your winning rate is ${winP}% - Total Games Played: ${totalGames}`;
   document.getElementById('start-button').disabled = false;
+  document.getElementById('giveup-button').disabled = false;
 };
 
 startButton.addEventListener('click', startGame);
 giveupButton.addEventListener('click', giveUp);
+
+// const toggleOps = () { document.getElementById('start-button').disabled = false;document.getElementById('start-button').disabled = false;}

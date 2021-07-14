@@ -16,6 +16,10 @@ body {
   border-radius: 8px;
 }
 
+#score {
+  background-color: yellowgreen;
+}
+
 .square:hover {
   background-color: grey;
 }
