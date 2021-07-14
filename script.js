@@ -20,9 +20,6 @@ let deck;
 let score = 0;
 const maxScore = (boardSize * boardSize) / 2;
 let start;
-const scoreBoard = document.createElement('div');
-scoreBoard.classList.add('scoreBoard');
-scoreBoard.innerHTML = 'Welcome! To start, input your name and click the start button';
 
 const makeDeck = () => {
   // create the empty deck at the beginning
@@ -224,7 +221,10 @@ giveupButton.innerText = 'Give up?';
 giveupButton.disabled = true;
 document.body.appendChild(giveupButton);
 
-// startButton.addEventListener('click', giveup);
+const scoreBoard = document.createElement('div');
+scoreBoard.classList.add('scoreBoard');
+scoreBoard.innerHTML = 'Welcome!<br> To start, input your name and click the start button';
+document.body.appendChild(scoreBoard);
 
 const makeGame = () => {
   // create this special deck by getting the doubled cards and
@@ -296,5 +296,3 @@ const giveUp = () => {
 
 startButton.addEventListener('click', startGame);
 giveupButton.addEventListener('click', giveUp);
-
-document.body.appendChild(scoreBoard);
