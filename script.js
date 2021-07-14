@@ -1,8 +1,19 @@
 // Please implement exercise logic here
 
 // boardSize has to be an even number
+let nameInput;
 const boardSize = 4;
 const board = [];
+let gameWins = 0;
+const gameLoss = 0;
+let totalGames = gameWins + gameLoss;
+let winP = 0;
+const checkWinRate = () => {
+  if (totalGames == 0) {
+    winP = 0;
+  }
+  winP = gameWins / totalGames;
+};
 let firstCard = null;
 let firstCardElement;
 let deck;
@@ -11,7 +22,7 @@ const maxScore = (boardSize * boardSize) / 2;
 let start;
 const scoreBoard = document.createElement('div');
 scoreBoard.classList.add('scoreBoard');
-scoreBoard.innerHTML = `${score} out of ${maxScore}`;
+scoreBoard.innerHTML = 'Welcome! To start, input your name and click the start button';
 
 const makeDeck = () => {
   // create the empty deck at the beginning
@@ -92,18 +103,24 @@ const squareClick = (cardElement, column, row) => {
     cardElement.innerText = '';
   };
 
+  const mutateCard = () => {
+    cardElement.replaceWith(firstCardElement.cloneNode(true));
+    cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
+    firstCardElement.replaceWith(firstCardElement.cloneNode(true));
+    firstCardElement.innerHTML = `${firstCard.name}<br>${firstCard.suit}`;
+  };
+
   // the user already clicked on this square
   if (cardElement.innerText !== '') {
     firstCard = null;
     setTimeout(clearCard, 0);
     console.log(firstCard);
-    // setTimeout(clearCard, 0);
   } else if (firstCard === null) {
     console.log('first turn');
-    firstCard = clickedCard;
+    setTimeout(() => { firstCard = clickedCard; }, 0);
     // turn this card over
     cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
-
+    console.log(cardElement);
     // hold onto this for later when it may not match
     firstCardElement = cardElement;
 
@@ -116,25 +133,31 @@ const squareClick = (cardElement, column, row) => {
     ) {
       console.log('match');
       score += 1;
-      scoreBoard.innerHTML = `${score} out of ${maxScore}`;
+      console.log(clickedCard.name, firstCard.name);
+      mutateCard();
       // turn this card over
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
+      if (score == maxScore) {
+        gameWins += 1;
+        const end = window.performance.now();
+        const timing = Math.floor((end - start) / 1000);
+        setTimeout(scoreBoard.innerHTML = `<br>You won, in a time of ${timing}s.<br>Your winning rate is ${winP}% - Total Games Played: ${totalGames}`, 5000);
+        document.getElementById('start-button').disabled = false;
+        return;
+      }
+      scoreBoard.innerHTML = `${score} out of ${maxScore}`;
+      scoreBoard.innerHTML += '<br>Match!';
+      setTimeout(() => { scoreBoard.innerHTML = `${score} out of ${maxScore}`; }, 3000);
     } else {
       console.log('NOT a match');
       // turn this card back over
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
       firstCard = null;
-      setTimeout(clearCard, 3000);
+      setTimeout(clearCard, 1000);
     }
 
     // reset the first card
     firstCard = null;
-  }
-
-  if (score == maxScore) {
-    const end = window.performance.now();
-    const timing = Math.floor((end - start) / 1000);
-    scoreBoard.innerHTML += `You won, in a time of ${timing}s`;
   }
 };
 
@@ -163,15 +186,18 @@ const buildBoardElements = (board) => {
 
       // set a class for CSS purposes
       square.classList.add('square');
+      square.id = i * 4 + j;
 
-      // set the click event
-      // eslint-disable-next-line
-      square.addEventListener('click', (event) => {
+      const clickEvent = (event) => {
         // we will want to pass in the card element so
         // that we can change how it looks on screen, i.e.,
         // "turn the card over"
         squareClick(event.currentTarget, i, j);
-      });
+      };
+
+      // set the click event
+      // eslint-disable-next-line
+      square.addEventListener('click', clickEvent);
 
       rowElement.appendChild(square);
     }
@@ -181,15 +207,22 @@ const buildBoardElements = (board) => {
   return boardElement;
 };
 
+const inputField = document.createElement('input');
+inputField.setAttribute('id', 'input');
+inputField.setAttribute('type', 'string');
+inputField.innerText = 'Input your name!';
+document.body.appendChild(inputField);
+
 const startButton = document.createElement('button');
 startButton.id = 'start-button';
-startButton.innerText = 'Click to start';
+startButton.innerText = 'Start';
 document.body.appendChild(startButton);
 
-// const giveupButton = document.createElement('button');
-// startButton.id = 'giveup-button';
-// startButton.innerText = 'Give up?';
-// document.body.appendChild(giveupButton);
+const giveupButton = document.createElement('button');
+giveupButton.id = 'giveup-button';
+giveupButton.innerText = 'Give up?';
+giveupButton.disabled = true;
+document.body.appendChild(giveupButton);
 
 // startButton.addEventListener('click', giveup);
 
@@ -230,15 +263,38 @@ const makeGame = () => {
   document.body.insertBefore(boardEl, startButton);
 };
 
+const getName = () => {
+  if (totalGames == 0) {
+    nameInput = document.getElementById('input').value;
+  }
+};
+
 const startGame = () => {
+  getName();
   start = window.performance.now();
   makeGame();
   document.getElementById('start-button').disabled = true;
+  document.getElementById('giveup-button').disabled = false;
+  scoreBoard.innerHTML = `Welcome ${nameInput}!<br>You've scored 0 out of ${maxScore}<br>This is your first game.`;
+  document.getElementById('input').disabled = true;
+};
+
+const giveUp = () => {
+  totalGames += 1;
+  checkWinRate();
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board.length; j++) {
+      const k = 4 * i + j;
+      const card = board[i][j];
+      document.getElementById(k).innerHTML = `${card.name}<br>${card.suit}`;
+    }
+  }
+  scoreBoard.innerHTML = `Too bad! Try again! <br>
+  Your winning rate is ${winP}% - Total Games Played: ${totalGames}`;
+  document.getElementById('start-button').disabled = false;
 };
 
 startButton.addEventListener('click', startGame);
-// const giveup = (board) {
-
-// }
+giveupButton.addEventListener('click', giveUp);
 
 document.body.appendChild(scoreBoard);

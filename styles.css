@@ -1,6 +1,7 @@
 body {
   background-color: pink;
   font-family: Roboto, sans-serif;
+  text-align: center;
 }
 
 .square {
@@ -21,4 +22,27 @@ body {
 
 .square:active {
   background-color: green;
+}
+
+.start-button::before {
+  content: "";
+  display: block;
+  width: 500px;
+}
+
+.board {
+  margin: 0 auto;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.row {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.alert {
+  background: rgba(0, 0, 0, 0.1);
+  position: static;
 }
