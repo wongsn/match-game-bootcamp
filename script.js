@@ -2,7 +2,7 @@
 
 // boardSize has to be an even number
 let nameInput;
-const boardSize = 4;
+const boardSize = 6;
 let board = [];
 let gameWins = 0;
 let gameLoss = 0;
@@ -20,16 +20,20 @@ let deck;
 let score = 0;
 const maxScore = (boardSize * boardSize) / 2;
 let start;
+let canClick = true;
 
 const makeDeck = () => {
   // create the empty deck at the beginning
   const newDeck = [];
   const suits = ['♦', '♣', '♥', '♠'];
+  const colors = ['red', 'black'];
 
   for (let suitIndex = 0; suitIndex < suits.length; suitIndex += 1) {
     // make a variable of the current suit
     const currentSuit = suits[suitIndex];
+    const currentColor = colors[suitIndex % 2];
     console.log(`current suit: ${currentSuit}`);
+    console.log(`current color: ${currentColor}`);
 
     // loop to create all cards in this suit
     // rank 1-13
@@ -52,6 +56,7 @@ const makeDeck = () => {
       const card = {
         name: cardName,
         suit: currentSuit,
+        color: currentColor,
         rank: rankCounter,
       };
 
@@ -93,38 +98,62 @@ const squareClick = (cardElement, column, row) => {
   // console.log(firstCard != null);
 
   console.log('BOARD CLICKED CARD', board[column][row]);
-  const clickedCard = board[column][row];
+  let clickedCard = board[column][row];
 
   const clearCard = () => {
-    firstCardElement.innerText = '';
-    cardElement.innerText = '';
+    canClick = true;
+    firstCardElement.innerHTML = '';
+    cardElement.innerHTML = '';
+  };
+
+  const nullify = () => {
+    firstCard = null;
+    clickedCard = null;
   };
 
   const mutateCard = () => {
     const p = firstCardElement.cloneNode(true);
     const q = firstCardElement.cloneNode(true);
     cardElement.replaceWith(p);
+    cardElement.setAttribute('style', `color: ${clickedCard.color}`);
     cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
     firstCardElement.replaceWith(q);
+    cardElement.setAttribute('style', `color: ${firstCard.color}`);
     firstCardElement.innerHTML = `${firstCard.name}<br>${firstCard.suit}`;
     p.id = 'score';
     q.id = 'score';
   };
 
+  if (canClick == false) {
+
+  }
   // the user already clicked on this square
-  if (cardElement.innerText !== '') {
-    firstCard = null;
-    setTimeout(clearCard, 0);
+  else if ((cardElement.innerText !== '' && firstCardElement == undefined) || cardElement.innerText !== '') {
+    setTimeout(() => { nullify(); }, 0);
+    setTimeout(() => { clearCard(); }, 0);
     console.log(firstCard);
   } else if (firstCard === null) {
+    // if third card clicked before all cards cleared
+    if (firstCardElement !== undefined) {
+      // reset the stage first
+      clearCard();
+      console.log('first turn');
+      setTimeout(() => { firstCard = clickedCard; }, 0);
+      // turn this card over
+      cardElement.setAttribute('style', `color: ${clickedCard.color}`);
+      cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
+      console.log(cardElement);
+      // hold onto this for later when it may not match
+      firstCardElement = cardElement;
+    }
     console.log('first turn');
     setTimeout(() => { firstCard = clickedCard; }, 0);
     // turn this card over
+    cardElement.setAttribute('style', `color: ${clickedCard.color}`);
     cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
     console.log(cardElement);
     // hold onto this for later when it may not match
     firstCardElement = cardElement;
-
     // second turn
   } else {
     console.log('second turn');
@@ -137,6 +166,7 @@ const squareClick = (cardElement, column, row) => {
       console.log(clickedCard.name, firstCard.name);
       mutateCard();
       // turn this card over
+      cardElement.setAttribute('style', `color: ${clickedCard.color}`);
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
       if (score == maxScore) {
         gameWins += 1;
@@ -155,13 +185,14 @@ const squareClick = (cardElement, column, row) => {
     } else {
       console.log('NOT a match');
       // turn this card back over
+      cardElement.setAttribute('style', `color: ${clickedCard.color}`);
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
-      firstCard = null;
-      setTimeout(clearCard, 1000);
+      canClick = false;
+      setTimeout(() => { clearCard(); }, 3000);
     }
 
     // reset the first card
-    firstCard = null;
+    setTimeout(() => { nullify(); }, 0);
   }
 };
 
@@ -190,7 +221,7 @@ const buildBoardElements = (board) => {
 
       // set a class for CSS purposes
       square.classList.add('square');
-      square.id = i * 4 + j;
+      square.id = i * boardSize + j;
 
       const clickEvent = (event) => {
         // we will want to pass in the card element so
@@ -297,8 +328,12 @@ const giveUp = () => {
   checkWinRate();
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board.length; j++) {
-      const k = 4 * i + j;
+      const k = boardSize * i + j;
       const card = board[i][j];
+      if (document.getElementById(k) == null) {
+        continue;
+      } const p = document.getElementById(k).cloneNode(true);
+      document.getElementById(k).replaceWith(p);
       document.getElementById(k).innerHTML = `${card.name}<br>${card.suit}`;
     }
   }
@@ -311,4 +346,4 @@ const giveUp = () => {
 startButton.addEventListener('click', startGame);
 giveupButton.addEventListener('click', giveUp);
 
-// const toggleOps = () { document.getElementById('start-button').disabled = false;document.getElementById('start-button').disabled = false;}
+// setInterval
