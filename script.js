@@ -1,8 +1,14 @@
 // Please implement exercise logic here
 
+let minute;
+let seconds;
+const delayInMilliseconds = 1000;
+
+let ref;
+
 // boardSize has to be an even number
 let nameInput;
-const boardSize = 6;
+const boardSize = 2;
 let board = [];
 let gameWins = 0;
 let gameLoss = 0;
@@ -170,6 +176,8 @@ const squareClick = (cardElement, column, row) => {
       cardElement.innerHTML = `${clickedCard.name}<br>${clickedCard.suit}`;
       if (score == maxScore) {
         gameWins += 1;
+        score = 0;
+        clearInterval(ref);
         totalGames = gameWins + gameLoss;
         checkWinRate();
         document.getElementById('giveup-button').disabled = true;
@@ -264,6 +272,9 @@ const scoreBoard = document.createElement('div');
 scoreBoard.classList.add('scoreBoard');
 scoreBoard.innerHTML = 'Welcome!<br> To start, input your name and click the start button';
 document.body.appendChild(scoreBoard);
+const timer = document.createElement('div');
+timer.classList.add('timer');
+document.body.appendChild(timer);
 
 const makeGame = () => {
   // create this special deck by getting the doubled cards and
@@ -309,6 +320,8 @@ const getName = () => {
 };
 
 const startGame = () => {
+  minute = 0;
+  seconds = 5;
   getName();
   start = window.performance.now();
   if (totalGames > 0) {
@@ -319,6 +332,20 @@ const startGame = () => {
   document.getElementById('start-button').disabled = true;
   document.getElementById('giveup-button').disabled = false;
   scoreBoard.innerHTML = `Welcome ${nameInput}!<br> This is Game #${totalGames + 1}. <br>Your winning percentage is ${winP}%.`;
+  timer.innerHTML = `Time left: ${minute}:${seconds}`;
+
+  ref = setInterval(() => {
+    timer.innerHTML = `Time left: ${minute}:${seconds}`;
+
+    if (minute <= 0 && seconds <= 0) {
+      clearInterval(ref);
+      giveUp();
+    } else if (minute > 0 && seconds < 1) {
+      minute -= 1;
+      seconds = 60;
+    } seconds -= 1;
+  }, delayInMilliseconds);
+
   document.getElementById('input').disabled = true;
 };
 
@@ -337,10 +364,12 @@ const giveUp = () => {
       document.getElementById(k).innerHTML = `${card.name}<br>${card.suit}`;
     }
   }
+  score = 0;
+  clearInterval(ref);
   scoreBoard.innerHTML = `Too bad! Try again! <br>
   Your winning rate is ${winP}% - Total Games Played: ${totalGames}`;
   document.getElementById('start-button').disabled = false;
-  document.getElementById('giveup-button').disabled = false;
+  document.getElementById('giveup-button').disabled = true;
 };
 
 startButton.addEventListener('click', startGame);
