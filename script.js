@@ -8,7 +8,7 @@ let ref;
 
 // boardSize has to be an even number
 let nameInput;
-const boardSize = 2;
+const boardSize = 4;
 let board = [];
 let gameWins = 0;
 let gameLoss = 0;
@@ -186,10 +186,11 @@ const squareClick = (cardElement, column, row) => {
         setTimeout(scoreBoard.innerHTML = `<br>You won, in a time of ${timing}s.<br>Your winning rate is ${winP}% - Total Games Played: ${totalGames}`, 5000);
         document.getElementById('start-button').disabled = false;
         return;
+      // eslint-disable-next-line no-else-return
+      } else {
+        scoreBoard.innerHTML = `${score} out of ${maxScore}`;
+        setTimeout(() => { scoreBoard.innerHTML += '<br>Match!'; }, 3000);
       }
-      scoreBoard.innerHTML = `${score} out of ${maxScore}`;
-      scoreBoard.innerHTML += '<br>Match!';
-      setTimeout(() => { scoreBoard.innerHTML = `${score} out of ${maxScore}`; }, 3000);
     } else {
       console.log('NOT a match');
       // turn this card back over
@@ -320,8 +321,8 @@ const getName = () => {
 };
 
 const startGame = () => {
-  minute = 0;
-  seconds = 5;
+  minute = 2;
+  seconds = 59;
   getName();
   start = window.performance.now();
   if (totalGames > 0) {
@@ -331,7 +332,7 @@ const startGame = () => {
   makeGame();
   document.getElementById('start-button').disabled = true;
   document.getElementById('giveup-button').disabled = false;
-  scoreBoard.innerHTML = `Welcome ${nameInput}!<br> This is Game #${totalGames + 1}. <br>Your winning percentage is ${winP}%.`;
+  scoreBoard.innerHTML = `Welcome ${nameInput}!<br> This is Game #${totalGames + 1}. <br>Your winning percentage is ${Math.floor(winP)}%.`;
   timer.innerHTML = `Time left: ${minute}:${seconds}`;
 
   ref = setInterval(() => {
@@ -367,7 +368,7 @@ const giveUp = () => {
   score = 0;
   clearInterval(ref);
   scoreBoard.innerHTML = `Too bad! Try again! <br>
-  Your winning rate is ${winP}% - Total Games Played: ${totalGames}`;
+  Your winning rate is ${Math.floor(winP)}% - Total Games Played: ${totalGames}`;
   document.getElementById('start-button').disabled = false;
   document.getElementById('giveup-button').disabled = true;
 };
